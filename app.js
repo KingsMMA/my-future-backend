@@ -25,7 +25,7 @@ function loadRoutes(dir, baseRoute = "") {
                 route += "/" + entry.name.replace(".js", "");
 
             const router = require(fullPath);
-            app.use(route || "/", router);
+            app.use(route?.replaceAll("$", ":") || "/", router);
             console.log(`Loaded route: ${route || "/"}`);
         }
     });
