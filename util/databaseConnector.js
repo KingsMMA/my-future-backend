@@ -1,4 +1,5 @@
 const { MongoClient } = require("mongodb");
+const {checkPassword} = require("./crypt");
 const RETRY_INTERVALS = [0, 5000, 5000];
 
 class DatabaseConnector {
@@ -51,9 +52,18 @@ class DatabaseConnector {
 
     async authenticate(email, password) {
         if (!email || !password) return null;
-        return await this.getDb()
+
+        const user = await this.getDb()
             .collection("users")
-            .findOne({ email, password });
+            .findOne({ email });
+        if (!user?.password) return null;
+        if (!await checkPassword(password, user.password)) return null;
+
+        return {
+            uuid: user.uuid,
+            email: user.email,
+            accountType: user.accountType,
+        };
     }
 }
 

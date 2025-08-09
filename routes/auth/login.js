@@ -10,11 +10,7 @@ router.post("/", async function (req, res) {
 
     const user = await databaseConnector.authenticate(email, password);
     if (user) {
-        const token = jwt.sign({
-            uuid: user.uuid,
-            email: user.email,
-            accountType: user.accountType,
-        }, SECRET, {expiresIn: "30d"});
+        const token = jwt.sign(user, SECRET, {expiresIn: "30d"});
         res.cookie("token", token, {
             httpOnly: true,
             sameSite: "strict",
