@@ -1,5 +1,5 @@
 var express = require("express");
-const databaseConnector = require("../databaseConnector");
+const databaseConnector = require("../util/databaseConnector");
 var router = express.Router();
 
 router.get("/", function (req, res, next) {

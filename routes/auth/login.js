@@ -1,6 +1,6 @@
 var express = require("express");
 var jwt = require("jsonwebtoken");
-const databaseConnector = require("../../databaseConnector");
+const databaseConnector = require("../../util/databaseConnector");
 var router = express.Router();
 
 const SECRET = process.env.JWT_SECRET;

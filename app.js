@@ -4,7 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var fs = require("fs");
-const { getDb } = require("./databaseConnector");
+const { getDb } = require("./util/databaseConnector");
 
 var app = express();
 
