@@ -48,6 +48,13 @@ class DatabaseConnector {
         if (!this.isConnected) throw new Error("Not connected to MongoDB");
         return this.db;
     }
+
+    async authenticate(email, password) {
+        if (!email || !password) return null;
+        return await this.getDb()
+            .collection("users")
+            .findOne({ email, password });
+    }
 }
 
 const MONGO_URI = process.env.MONGO_URI;
