@@ -2,6 +2,15 @@ const jwt = require("jsonwebtoken");
 
 const SECRET = process.env.JWT_SECRET;
 
+function logIn(res, authUser) {
+    const token = jwt.sign(authUser, SECRET, { expiresIn: "30d" });
+    res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000  // 30 days
+    });
+}
+
 function authLoggedIn(req, res, next) {
     const token = req.cookies.token;
     if (!token) {
@@ -32,5 +41,5 @@ const authCitizenOnly = authFactory("citizen");
 const authBusinessOnly = authFactory("business");
 const authGovernmentOnly = authFactory("government");
 
-module.exports = { authLoggedIn, authCitizenOnly, authBusinessOnly, authGovernmentOnly };
+module.exports = { logIn, authLoggedIn, authCitizenOnly, authBusinessOnly, authGovernmentOnly };
 
