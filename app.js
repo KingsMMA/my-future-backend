@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -8,7 +10,6 @@ const { getDb } = require("./util/databaseConnector");
 
 var app = express();
 
-require('dotenv').config();
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
