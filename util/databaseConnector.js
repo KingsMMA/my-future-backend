@@ -65,6 +65,26 @@ class DatabaseConnector {
             accountType: user.accountType,
         };
     }
+
+    async getUserByUuid(uuid) {
+        if (!uuid) return null;
+
+        const user = await this.getDb()
+            .collection("users")
+            .findOne({ uuid });
+        if (!user) return null;
+
+        return {
+            uuid: user.uuid,
+            email: user.email,
+            points: user.points,
+            name: user.name,
+            accountType: user.accountType,
+            address: user.address,
+            pfp: user.pfp,
+            contributedTo: user.contributedTo || [],
+        };
+    }
 }
 
 const MONGO_URI = process.env.MONGO_URI;
