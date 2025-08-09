@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const SECRET = process.env.JWT_SECRET;
 
-function authenticateJWT(req, res, next) {
+function authLoggedIn(req, res, next) {
     const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ success: false, message: "Authentication required" });
@@ -16,5 +16,5 @@ function authenticateJWT(req, res, next) {
     });
 }
 
-module.exports = authenticateJWT;
+module.exports = authLoggedIn;
 
