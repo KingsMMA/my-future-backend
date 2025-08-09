@@ -29,7 +29,7 @@ router.post("/", function (req, res, next) {
         bodyKeys.length !== requiredFields.length ||
         !requiredFields.every((field) => bodyKeys.includes(field))
     ) {
-        return res.status(400).json({ success: false, message: "Invalid fields in request body" });
+        return res.status(400).json({ success: false, message: "Invalid request body structure" });
     }
 
     // Type and value checks
@@ -43,17 +43,17 @@ router.post("/", function (req, res, next) {
         typeof body.pfp !== "string" ||
         !allowedAccountTypes.includes(body.accountType)
     ) {
-        return res.status(400).json({ success: false, message: "Invalid field types or values" });
+        return res.status(400).json({ success: false, message: "Invalid body values" });
     }
 
     // Email format check
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-        return res.status(400).json({ success: false, message: "Invalid email format" });
+        return res.status(400).json({ success: false, message: "Invalid email" });
     }
 
     // Birthdate format check (YYYY-mm-dd)
     if (!/^\d{4}-\d{2}-\d{2}$/.test(body.birthdate)) {
-        return res.status(400).json({ success: false, message: "Invalid birthdate format" });
+        return res.status(400).json({ success: false, message: "Invalid birthdate" });
     }
 
     // PFP format check
