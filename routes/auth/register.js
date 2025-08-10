@@ -12,11 +12,9 @@ router.post("/", function (req, res, next) {
 
     const requiredFields = [
         "email",
-        "phoneNumber",
         "name",
         "accountType",
         "password",
-        "birthdate",
         "address",
         "pfp"
     ];
@@ -35,10 +33,8 @@ router.post("/", function (req, res, next) {
     // Type and value checks
     if (
         typeof body.email !== "string" ||
-        typeof body.phoneNumber !== "string" ||
         typeof body.name !== "string" ||
         typeof body.password !== "string" ||
-        typeof body.birthdate !== "string" ||
         typeof body.address !== "string" ||
         typeof body.pfp !== "string" ||
         !allowedAccountTypes.includes(body.accountType)
@@ -49,11 +45,6 @@ router.post("/", function (req, res, next) {
     // Email format check
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
         return res.status(400).json({ success: false, message: "Invalid email" });
-    }
-
-    // Birthdate format check (YYYY-mm-dd)
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(body.birthdate)) {
-        return res.status(400).json({ success: false, message: "Invalid birthdate" });
     }
 
     // PFP format check
