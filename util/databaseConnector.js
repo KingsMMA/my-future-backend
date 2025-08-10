@@ -105,7 +105,7 @@ class DatabaseConnector {
             .findOne({ uuid }));
         Object.assign(user, {
             uuid,
-            points: 0,
+            points: 10,
             password: hashPassword(user.password),
             contributedTo: [],
         });
