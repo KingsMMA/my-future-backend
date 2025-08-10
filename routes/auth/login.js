@@ -20,8 +20,8 @@ router.post("/", async function (req, res) {
 
     const user = await databaseConnector.authenticate(email, password);
     if (user) {
-        logIn(res, user);
-        res.json({ success: true });
+        const jwt = logIn(res, user);
+        res.json({ success: true, token: jwt });
     } else {
         res.status(401).json({
             success: false,

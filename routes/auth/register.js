@@ -67,8 +67,8 @@ router.post("/", async function (req, res, next) {
 
     const authUser = await databaseConnector.createUser(body);
     if (authUser) {
-        logIn(res, authUser);
-        res.json({ success: true });
+        const jwt = logIn(res, authUser);
+        res.json({ success: true, token: jwt });
     } else {
         res.status(409).json({
             success: false,
