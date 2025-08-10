@@ -31,13 +31,21 @@
 
 ## Users
 
+### GET /users
+- **Description:** List all users or provide user-related operations (implementation dependent).
+- **Access:** Government only
+
 ### GET /users/:uuid
 - **Description:** Get user info by UUID.
 - **Access:** Government only
+- **Response:**
+  - `user` object with fields: uuid, email, points, name, accountType, address, pfp, contributedTo
 
 ### GET /users/@me
 - **Description:** Get info for the current authenticated user.
 - **Access:** Authenticated users only
+- **Response:**
+  - `user` object with fields: uuid, email, points, name, accountType, address, pfp, contributedTo
 
 ---
 
