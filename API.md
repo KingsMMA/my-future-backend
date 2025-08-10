@@ -115,8 +115,8 @@
 ## Example Error Response
 ```json
 {
-  "success": false,
-  "message": "Missing required field: name"
+    "success": false,
+    "message": "Missing required field: name"
 }
 ```
 
