@@ -38,8 +38,7 @@ const authFactory = requiredRole => {
 }
 
 const authCitizenOnly = authFactory("citizen");
-const authBusinessOnly = authFactory("business");
 const authGovernmentOnly = authFactory("government");
 
-module.exports = { logIn, authLoggedIn, authCitizenOnly, authBusinessOnly, authGovernmentOnly };
+module.exports = { logIn, authLoggedIn, authCitizenOnly, authGovernmentOnly };
 

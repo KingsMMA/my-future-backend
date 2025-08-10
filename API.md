@@ -15,7 +15,6 @@
   - `email` (string)
   - `password` (string)
   - `name` (string)
-  - `accountType` ("citizen" | "business")
   - `address` (string)
   - `pfp` (Base64 string)
 - **Access:** Public

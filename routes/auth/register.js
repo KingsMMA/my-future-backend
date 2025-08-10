@@ -13,12 +13,10 @@ router.post("/", async function (req, res, next) {
     const requiredFields = {
         email: "string",
         name: "string",
-        accountType: "string",
         password: "string",
         address: "string",
         pfp: "string"
     };
-    const allowedAccountTypes = ["citizen", "business"];
     const body = req.body;
 
     // Check for extra or missing fields
@@ -32,8 +30,7 @@ router.post("/", async function (req, res, next) {
 
     // Type and value checks
     if (
-        Object.entries(requiredFields).some(([field, type]) => typeof body[field] !== type) ||
-        !allowedAccountTypes.includes(body.accountType)
+        Object.entries(requiredFields).some(([field, type]) => typeof body[field] !== type)
     ) {
         return res.status(400).json({ success: false, message: "Invalid body values" });
     }
