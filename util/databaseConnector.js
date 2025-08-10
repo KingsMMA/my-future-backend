@@ -87,6 +87,13 @@ class DatabaseConnector {
         };
     }
 
+    async listUsers() {
+        return await this.getDb()
+            .collection("users")
+            .find({}, { projection: { _id: 0 } })
+            .toArray();
+    }
+
     /**
      * Creates a new user in the database.
      * @param user The <b>validated</b> user data
