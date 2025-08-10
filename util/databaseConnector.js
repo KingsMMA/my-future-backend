@@ -90,6 +90,7 @@ class DatabaseConnector {
     /**
      * Creates a new user in the database.
      * @param user The <b>validated</b> user data
+     * @return {Promise<{uuid: string, email: string, accountType: string}|null>} The created user data or null if the email is already registered
      */
     async createUser(user) {
         if (await this.getDb()
