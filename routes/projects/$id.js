@@ -1,5 +1,6 @@
 var express = require("express");
 const databaseConnector = require("../../util/databaseConnector");
+const {authGovernmentOnly} = require("../../util/authenticateJWT");
 var router = express.Router();
 
 router.get("/", async function (req, res, next) {
@@ -19,7 +20,7 @@ router.get("/", async function (req, res, next) {
     });
 });
 
-router.post("/", async function (req, res, next) {
+router.post("/", authGovernmentOnly, async function (req, res, next) {
     const projectId = req.baseUrl.split("/").pop();  // Extract project id from URL
     const projectData = req.body;
     if (projectId !== projectData.id) {
