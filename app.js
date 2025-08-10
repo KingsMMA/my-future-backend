@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var createError = require("http-errors");
 var express = require("express");
 const cors = require('cors');
@@ -27,8 +29,9 @@ function loadRoutes(dir, baseRoute = "") {
                 route += "/" + entry.name.replace(".js", "");
 
             const router = require(fullPath);
-            app.use(route?.replaceAll("$", ":") || "/", router);
-            console.log(`Loaded route: ${route || "/"}`);
+            const finalRoute = route?.replaceAll("$", ":").replaceAll("!", "") || "/";
+            app.use(finalRoute, router);
+            console.log(`Loaded route: ${finalRoute}`);
         }
     });
 }

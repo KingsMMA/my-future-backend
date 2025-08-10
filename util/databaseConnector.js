@@ -1,5 +1,6 @@
 const { MongoClient } = require("mongodb");
-const {checkPassword} = require("./crypt");
+const {checkPassword, hashPassword} = require("./crypt");
+const {v4} = require("uuid");
 const RETRY_INTERVALS = [0, 5000, 5000];
 
 class DatabaseConnector {
@@ -83,6 +84,41 @@ class DatabaseConnector {
             address: user.address,
             pfp: user.pfp,
             contributedTo: user.contributedTo || [],
+        };
+    }
+
+    /**
+     * Creates a new user in the database.
+     * @param user The <b>validated</b> user data
+     */
+    async createUser(user) {
+        if (await this.getDb()
+            .collection("users")
+            .findOne({ email: user.email }))
+            return null;
+
+        let uuid;
+        do {
+            uuid = v4();
+        } while (await this.getDb()
+            .collection("users")
+            .findOne({ uuid }));
+        Object.assign(user, {
+            uuid,
+            points: 0,
+            password: hashPassword(user.password),
+            contributedTo: [],
+        });
+
+        const result = await this.getDb()
+            .collection("users")
+            .insertOne(user);
+        if (!result.acknowledged) return null;
+
+        return {
+            uuid: user.uuid,
+            email: user.email,
+            accountType: user.accountType,
         };
     }
 }
