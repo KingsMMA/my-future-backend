@@ -131,7 +131,7 @@ class DatabaseConnector {
                 {},
                 {
                     projection: {
-                        _id: 1,
+                        id: 1,
                         name: 1,
                         description: 1,
                         category: 1,
