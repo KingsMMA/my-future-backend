@@ -52,7 +52,7 @@ router.post("/", async function (req, res, next) {
         return res.status(400).json({ success: false, message: `Profile picture must be an image with a max size of ${process.env.MAX_PFP_SIZE}x${process.env.MAX_PFP_SIZE}` });
     }
 
-    const authUser = databaseConnector.createUser(body);
+    const authUser = await databaseConnector.createUser(body);
     if (authUser) {
         logIn(res, authUser);
         res.json({ success: true });
