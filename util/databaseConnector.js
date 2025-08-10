@@ -129,6 +129,40 @@ class DatabaseConnector {
             .find({}, { projection: { _id: 1, name: 1, description: 1, category: 1, dateStarted: 1, dateCompleted: 1, thumbnail: 1, progress: 1, goal: 1 } })
             .toArray();
     }
+
+    async getProjectById(id) {
+        if (!id) return null;
+
+        return await this.getDb()
+            .collection("projects")
+            .findOne({ id: id }, { projection: { _id: 0, citizenContributions: 0 } });
+    }
+
+    /**
+     * Creates a new project in the database.
+     * @param project The <b>validated</b> project data
+     * @return {Promise<boolean | null>} True if the project was created successfully, false if a project with the same id already exists, or null if an error occurred
+     */
+    async createProject(project) {
+        if (await this.getDb()
+            .collection("projects")
+            .findOne({ id: project.id }))
+            return false;
+
+        Object.assign(project, {
+            progress: 0,
+            citizenContributions: [],
+            businessDonations: [],
+            dateStarted: new Date(),
+        });
+
+        const result = await this.getDb()
+            .collection("projects")
+            .insertOne(project);
+        if (!result.acknowledged) return null;
+
+        return true;
+    }
 }
 
 const MONGO_URI = process.env.MONGO_URI;
