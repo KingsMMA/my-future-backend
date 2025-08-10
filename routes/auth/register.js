@@ -66,7 +66,7 @@ router.post("/", function (req, res, next) {
         logIn(res, authUser);
         res.json({ success: true });
     } else {
-        res.status(500).json({ success: false, message: "An internal server error occurred" });
+        res.status(409).json({ success: false, message: "An account has already been registered with this email" });
     }
 });
 

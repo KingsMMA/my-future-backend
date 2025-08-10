@@ -91,12 +91,17 @@ class DatabaseConnector {
      * @param user The <b>validated</b> user data
      */
     async createUser(user) {
+        if (await this.getDb()
+            .collection("users")
+            .findOne({ email: user.email }))
+            return null;
+
         let uuid;
         do {
             uuid = uuidV4();
-        } while ((await this.getDb()
+        } while (await this.getDb()
             .collection("users")
-            .findOne({ uuid })));
+            .findOne({ uuid }));
         Object.assign(user, {
             uuid,
             points: 0,
