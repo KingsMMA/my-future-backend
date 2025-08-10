@@ -80,6 +80,20 @@
 - **Description:** Delete a project by ID.
 - **Access:** Government only
 
+### POST /projects/:id/contribute
+- **Description:** Contribute points to a project.
+- **Request Body:**
+  - `amount` (number): The number of points to contribute.
+- **Access:** Authenticated users only
+- **Response:**
+  - `success` (boolean)
+  - `message` (string)
+  - `amount` (number): Amount contributed
+  - `newProgress` (number): Updated project progress
+  - `newPoints` (number): User's new points balance
+  - `goal` (number): Project goal
+  - `completed` (boolean): Whether the project is now completed
+
 ---
 
 ## Status
