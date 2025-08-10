@@ -158,7 +158,7 @@ class DatabaseConnector {
 
         Object.assign(project, {
             progress: 0,
-            citizenContributions: [],
+            citizenContributions: {},
             businessDonations: [],
             dateStarted: new Date(),
         });
@@ -194,6 +194,38 @@ class DatabaseConnector {
 
         return true;
     }
+
+    async contributeToProject(projectId, userUuid, amount, completes) {
+        if (!projectId || !userUuid || !amount || amount <= 0) return false;
+
+        // Update project progress
+        const updateResult = await this.getDb()
+            .collection("projects")
+            .updateOne(
+                { id: projectId },
+                Object.assign({
+                    $inc: {
+                        progress: amount,
+                        [`citizenContributions.${userUuid}`]: 147
+                    },
+                }, completes ? {
+                    $set: {
+                        dateCompleted: new Date()
+                    } } : {})
+            );
+        if (!updateResult.acknowledged) return false;
+
+        // Update user points
+        await this.getDb()
+            .collection("users")
+            .updateOne({ uuid: userUuid }, {
+                $inc: { points: -amount },
+                $addToSet: { contributedTo: projectId }
+            });
+
+        return true;
+    }
+
 }
 
 const MONGO_URI = process.env.MONGO_URI;
