@@ -10,33 +10,29 @@ router.post("/", async function (req, res, next) {
         return;
     }
 
-    const requiredFields = [
-        "email",
-        "name",
-        "accountType",
-        "password",
-        "address",
-        "pfp"
-    ];
+    const requiredFields = {
+        email: "string",
+        name: "string",
+        accountType: "string",
+        password: "string",
+        address: "string",
+        pfp: "string"
+    };
     const allowedAccountTypes = ["citizen", "business"];
     const body = req.body;
 
     // Check for extra or missing fields
     const bodyKeys = Object.keys(body);
     if (
-        bodyKeys.length !== requiredFields.length ||
-        !requiredFields.every((field) => bodyKeys.includes(field))
+        bodyKeys.length !== Object.keys(requiredFields).length ||
+        !Object.keys(requiredFields).every((field) => bodyKeys.includes(field))
     ) {
         return res.status(400).json({ success: false, message: "Invalid request body structure" });
     }
 
     // Type and value checks
     if (
-        typeof body.email !== "string" ||
-        typeof body.name !== "string" ||
-        typeof body.password !== "string" ||
-        typeof body.address !== "string" ||
-        typeof body.pfp !== "string" ||
+        Object.entries(requiredFields).some(([field, type]) => typeof body[field] !== type) ||
         !allowedAccountTypes.includes(body.accountType)
     ) {
         return res.status(400).json({ success: false, message: "Invalid body values" });
