@@ -1,10 +1,10 @@
 var express = require("express");
-const validatePfp = require("../../util/imageUtil");
+const validatePfp = require("../../util/imageUtil").default;
 const databaseConnector = require("../../util/databaseConnector");
 const {logIn} = require("../../util/authenticateJWT");
 var router = express.Router();
 
-router.post("/", function (req, res, next) {
+router.post("/", async function (req, res, next) {
     if (req.cookies.token) {
         res.status(400).json({success: false, message: "Already logged in: please use /auth/logout to log out first"});
         return;
@@ -48,7 +48,7 @@ router.post("/", function (req, res, next) {
     }
 
     // PFP format check
-    if (!validatePfp(body.pfp)) {
+    if (!(await validatePfp(body.pfp))) {
         return res.status(400).json({ success: false, message: `Profile picture must be an image with a max size of ${process.env.MAX_PFP_SIZE}x${process.env.MAX_PFP_SIZE}` });
     }
 
