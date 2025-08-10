@@ -121,6 +121,13 @@ class DatabaseConnector {
             accountType: user.accountType,
         };
     }
+
+    async listProjects() {
+        return await this.getDb()
+            .collection("projects")
+            .find({}, { projection: { _id: 1, name: 1, description: 1, category: 1, dateStarted: 1, dateCompleted: 1, thumbnail: 1, progress: 1, goal: 1 } })
+            .toArray();
+    }
 }
 
 const MONGO_URI = process.env.MONGO_URI;
