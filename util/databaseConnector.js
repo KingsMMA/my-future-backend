@@ -1,5 +1,6 @@
 const { MongoClient } = require("mongodb");
 const {checkPassword, hashPassword} = require("./crypt");
+const {v4} = require("uuid");
 const RETRY_INTERVALS = [0, 5000, 5000];
 
 class DatabaseConnector {
@@ -98,7 +99,7 @@ class DatabaseConnector {
 
         let uuid;
         do {
-            uuid = uuidV4();
+            uuid = v4();
         } while (await this.getDb()
             .collection("users")
             .findOne({ uuid }));
