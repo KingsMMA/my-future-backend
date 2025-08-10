@@ -58,14 +58,20 @@
   - `goal` (number)
   - `contact` (string)
 - **Access:** Government only
-- **Notes:**
-  - All fields above are required.
-  - No extra fields allowed.
-  - Types must match exactly.
 
 ### GET /projects/:id
 - **Description:** Get project info by ID.
 - **Access:** Public
+
+### PUT /projects/:id
+- **Description:** Update one or more fields of a project by ID.
+- **Request Body:**
+  - Any subset of: `name` (string), `description` (string), `category` (string), `thumbnail` (string), `goal` (number), `contact` (string)
+- **Access:** Government only
+
+### DELETE /projects/:id
+- **Description:** Delete a project by ID.
+- **Access:** Government only
 
 ---
 
@@ -95,4 +101,3 @@
 ---
 
 For more details on request/response formats, see the source code or contact the API maintainer.
-

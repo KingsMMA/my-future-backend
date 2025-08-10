@@ -66,4 +66,38 @@ router.post("/", authGovernmentOnly, async function (req, res, next) {
     });
 });
 
+router.put("/", authGovernmentOnly, async function (req, res, next) {
+    const projectId = req.baseUrl.split("/").pop();  // Extract project id from URL
+    const projectData = req.body;
+    if (projectId !== projectData.id) {
+        return res.status(400).json({ success: false, message: "Project ID in URL does not match ID in request body" });
+    }
+
+    const result = await databaseConnector.updateProject(projectData);
+    if (result === null) {
+        return res.status(500).json({ success: false, message: "Failed to update project" });
+    } else if (!result) {
+        return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    res.send({
+        success: true,
+    });
+});
+
+router.delete("/", authGovernmentOnly, async function (req, res, next) {
+    const projectId = req.baseUrl.split("/").pop();  // Extract project id from URL
+
+    const result = await databaseConnector.deleteProject(projectId);
+    if (result === null) {
+        return res.status(500).json({ success: false, message: "Failed to delete project" });
+    } else if (!result) {
+        return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    res.send({
+        success: true,
+    });
+});
+
 module.exports = router;

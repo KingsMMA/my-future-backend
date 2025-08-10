@@ -163,6 +163,30 @@ class DatabaseConnector {
 
         return true;
     }
+
+    async updateProject(project) {
+        if (!project?.id) return null;
+
+        const result = await this.getDb()
+            .collection("projects")
+            .updateOne({ id: project.id }, { $set: project });
+        if (result.matchedCount === 0) return false;
+        if (!result.acknowledged) return null;
+
+        return true;
+    }
+
+    async deleteProject(id) {
+        if (!id) return null;
+
+        const result = await this.getDb()
+            .collection("projects")
+            .deleteOne({ id });
+        if (result.deletedCount === 0) return false;
+        if (!result.acknowledged) return null;
+
+        return true;
+    }
 }
 
 const MONGO_URI = process.env.MONGO_URI;
