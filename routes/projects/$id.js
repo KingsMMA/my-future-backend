@@ -1,10 +1,10 @@
 var express = require("express");
 const databaseConnector = require("../../util/databaseConnector");
-const {authGovernmentOnly} = require("../../util/authenticateJWT");
+const { authGovernmentOnly } = require("../../util/authenticateJWT");
 var router = express.Router();
 
 router.get("/", async function (req, res, next) {
-    const projectId = req.baseUrl.split("/").pop();  // Extract project id from URL
+    const projectId = req.baseUrl.split("/").pop(); // Extract project id from URL
     const project = await databaseConnector.getProjectById(projectId);
 
     if (!project) {
@@ -21,10 +21,15 @@ router.get("/", async function (req, res, next) {
 });
 
 router.post("/", authGovernmentOnly, async function (req, res, next) {
-    const projectId = req.baseUrl.split("/").pop();  // Extract project id from URL
+    const projectId = req.baseUrl.split("/").pop(); // Extract project id from URL
     const projectData = req.body;
     if (projectId !== projectData.id) {
-        return res.status(400).json({ success: false, message: "Project ID in URL does not match ID in request body" });
+        return res
+            .status(400)
+            .json({
+                success: false,
+                message: "Project ID in URL does not match ID in request body",
+            });
     }
 
     const requiredFields = {
@@ -34,7 +39,7 @@ router.post("/", authGovernmentOnly, async function (req, res, next) {
         category: "string",
         thumbnail: "string",
         goal: "number",
-        contact: "string"
+        contact: "string",
     };
     const body = req.body;
 
@@ -44,21 +49,37 @@ router.post("/", authGovernmentOnly, async function (req, res, next) {
         bodyKeys.length !== Object.keys(requiredFields).length ||
         !Object.keys(requiredFields).every((field) => bodyKeys.includes(field))
     ) {
-        return res.status(400).json({ success: false, message: "Invalid request body structure" });
+        return res
+            .status(400)
+            .json({
+                success: false,
+                message: "Invalid request body structure",
+            });
     }
 
     // Type and value checks
     if (
-        Object.entries(requiredFields).some(([field, type]) => typeof body[field] !== type)
+        Object.entries(requiredFields).some(
+            ([field, type]) => typeof body[field] !== type,
+        )
     ) {
-        return res.status(400).json({ success: false, message: "Invalid body values" });
+        return res
+            .status(400)
+            .json({ success: false, message: "Invalid body values" });
     }
 
     const result = await databaseConnector.createProject(projectData);
     if (result === null) {
-        return res.status(500).json({ success: false, message: "Failed to create project" });
+        return res
+            .status(500)
+            .json({ success: false, message: "Failed to create project" });
     } else if (!result) {
-        return res.status(409).json({ success: false, message: "Project with this ID already exists" });
+        return res
+            .status(409)
+            .json({
+                success: false,
+                message: "Project with this ID already exists",
+            });
     }
 
     res.send({
@@ -67,17 +88,26 @@ router.post("/", authGovernmentOnly, async function (req, res, next) {
 });
 
 router.put("/", authGovernmentOnly, async function (req, res, next) {
-    const projectId = req.baseUrl.split("/").pop();  // Extract project id from URL
+    const projectId = req.baseUrl.split("/").pop(); // Extract project id from URL
     const projectData = req.body;
     if (projectId !== projectData.id) {
-        return res.status(400).json({ success: false, message: "Project ID in URL does not match ID in request body" });
+        return res
+            .status(400)
+            .json({
+                success: false,
+                message: "Project ID in URL does not match ID in request body",
+            });
     }
 
     const result = await databaseConnector.updateProject(projectData);
     if (result === null) {
-        return res.status(500).json({ success: false, message: "Failed to update project" });
+        return res
+            .status(500)
+            .json({ success: false, message: "Failed to update project" });
     } else if (!result) {
-        return res.status(404).json({ success: false, message: "Project not found" });
+        return res
+            .status(404)
+            .json({ success: false, message: "Project not found" });
     }
 
     res.send({
@@ -86,13 +116,17 @@ router.put("/", authGovernmentOnly, async function (req, res, next) {
 });
 
 router.delete("/", authGovernmentOnly, async function (req, res, next) {
-    const projectId = req.baseUrl.split("/").pop();  // Extract project id from URL
+    const projectId = req.baseUrl.split("/").pop(); // Extract project id from URL
 
     const result = await databaseConnector.deleteProject(projectId);
     if (result === null) {
-        return res.status(500).json({ success: false, message: "Failed to delete project" });
+        return res
+            .status(500)
+            .json({ success: false, message: "Failed to delete project" });
     } else if (!result) {
-        return res.status(404).json({ success: false, message: "Project not found" });
+        return res
+            .status(404)
+            .json({ success: false, message: "Project not found" });
     }
 
     res.send({

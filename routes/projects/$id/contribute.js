@@ -45,7 +45,12 @@ router.post("/", authLoggedIn, async function (req, res, next) {
         });
     }
 
-    const success = await databaseConnector.contributeToProject(projectId, authedUser.uuid, amount, project.progress + amount >= project.goal);
+    const success = await databaseConnector.contributeToProject(
+        projectId,
+        authedUser.uuid,
+        amount,
+        project.progress + amount >= project.goal,
+    );
     if (!success) {
         return res.status(500).send({
             success: false,

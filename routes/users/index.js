@@ -1,5 +1,5 @@
 var express = require("express");
-const {authGovernmentOnly} = require("../../util/authenticateJWT");
+const { authGovernmentOnly } = require("../../util/authenticateJWT");
 const databaseConnector = require("../../util/databaseConnector");
 var router = express.Router();
 

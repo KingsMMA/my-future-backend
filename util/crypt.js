@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 async function hashPassword(password) {
     const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS, 10) || 10;
@@ -13,4 +13,3 @@ module.exports = {
     hashPassword,
     checkPassword,
 };
-

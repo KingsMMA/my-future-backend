@@ -1,8 +1,8 @@
-require('dotenv').config();
+require("dotenv").config();
 
 var createError = require("http-errors");
 var express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -29,7 +29,8 @@ function loadRoutes(dir, baseRoute = "") {
                 route += "/" + entry.name.replace(".js", "");
 
             const router = require(fullPath);
-            const finalRoute = route?.replaceAll("$", ":").replaceAll("!", "") || "/";
+            const finalRoute =
+                route?.replaceAll("$", ":").replaceAll("!", "") || "/";
             app.use(finalRoute, router);
             console.log(`Loaded route: ${finalRoute}`);
         }
@@ -44,10 +45,7 @@ app.use(function (req, res, next) {
 
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.json(Object.assign(
-        { success: false },
-        err
-    ));
+    res.json(Object.assign({ success: false }, err));
 });
 
 void getDb;

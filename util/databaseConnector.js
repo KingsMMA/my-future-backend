@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
-const {checkPassword, hashPassword} = require("./crypt");
-const {v4} = require("uuid");
+const { checkPassword, hashPassword } = require("./crypt");
+const { v4 } = require("uuid");
 const RETRY_INTERVALS = [0, 5000, 5000];
 
 class DatabaseConnector {
@@ -54,11 +54,9 @@ class DatabaseConnector {
     async authenticate(email, password) {
         if (!email || !password) return null;
 
-        const user = await this.getDb()
-            .collection("users")
-            .findOne({ email });
+        const user = await this.getDb().collection("users").findOne({ email });
         if (!user?.password) return null;
-        if (!await checkPassword(password, user.password)) return null;
+        if (!(await checkPassword(password, user.password))) return null;
 
         return {
             uuid: user.uuid,
@@ -70,9 +68,7 @@ class DatabaseConnector {
     async getUserByUuid(uuid) {
         if (!uuid) return null;
 
-        const user = await this.getDb()
-            .collection("users")
-            .findOne({ uuid });
+        const user = await this.getDb().collection("users").findOne({ uuid });
         if (!user) return null;
 
         return {
@@ -100,17 +96,17 @@ class DatabaseConnector {
      * @return {Promise<{uuid: string, email: string, accountType: string}|null>} The created user data or null if the email is already registered
      */
     async createUser(user) {
-        if (await this.getDb()
-            .collection("users")
-            .findOne({ email: user.email }))
+        if (
+            await this.getDb()
+                .collection("users")
+                .findOne({ email: user.email })
+        )
             return null;
 
         let uuid;
         do {
             uuid = v4();
-        } while (await this.getDb()
-            .collection("users")
-            .findOne({ uuid }));
+        } while (await this.getDb().collection("users").findOne({ uuid }));
         Object.assign(user, {
             uuid,
             points: 10,
@@ -118,9 +114,7 @@ class DatabaseConnector {
             contributedTo: [],
         });
 
-        const result = await this.getDb()
-            .collection("users")
-            .insertOne(user);
+        const result = await this.getDb().collection("users").insertOne(user);
         if (!result.acknowledged) return null;
 
         return {
@@ -133,7 +127,22 @@ class DatabaseConnector {
     async listProjects() {
         return await this.getDb()
             .collection("projects")
-            .find({}, { projection: { _id: 1, name: 1, description: 1, category: 1, dateStarted: 1, dateCompleted: 1, thumbnail: 1, progress: 1, goal: 1 } })
+            .find(
+                {},
+                {
+                    projection: {
+                        _id: 1,
+                        name: 1,
+                        description: 1,
+                        category: 1,
+                        dateStarted: 1,
+                        dateCompleted: 1,
+                        thumbnail: 1,
+                        progress: 1,
+                        goal: 1,
+                    },
+                },
+            )
             .toArray();
     }
 
@@ -142,7 +151,10 @@ class DatabaseConnector {
 
         return await this.getDb()
             .collection("projects")
-            .findOne({ id: id }, { projection: { _id: 0, citizenContributions: 0 } });
+            .findOne(
+                { id: id },
+                { projection: { _id: 0, citizenContributions: 0 } },
+            );
     }
 
     /**
@@ -151,9 +163,11 @@ class DatabaseConnector {
      * @return {Promise<boolean | null>} True if the project was created successfully, false if a project with the same id already exists, or null if an error occurred
      */
     async createProject(project) {
-        if (await this.getDb()
-            .collection("projects")
-            .findOne({ id: project.id }))
+        if (
+            await this.getDb()
+                .collection("projects")
+                .findOne({ id: project.id })
+        )
             return false;
 
         Object.assign(project, {
@@ -203,31 +217,41 @@ class DatabaseConnector {
             .collection("projects")
             .updateOne(
                 { id: projectId },
-                Object.assign({
-                    $inc: {
-                        progress: amount,
-                        [`citizenContributions.${userUuid}`]: 147
+                Object.assign(
+                    {
+                        $inc: {
+                            progress: amount,
+                            [`citizenContributions.${userUuid}`]: 147,
+                        },
                     },
-                }, completes ? {
-                    $set: {
-                        dateCompleted: new Date()
-                    } } : {})
+                    completes
+                        ? {
+                              $set: {
+                                  dateCompleted: new Date(),
+                              },
+                          }
+                        : {},
+                ),
             );
         if (!updateResult.acknowledged) return false;
 
         // Update user points
         await this.getDb()
             .collection("users")
-            .updateOne({ uuid: userUuid }, {
-                $inc: { points: -amount },
-                $addToSet: { contributedTo: projectId }
-            });
+            .updateOne(
+                { uuid: userUuid },
+                {
+                    $inc: { points: -amount },
+                    $addToSet: { contributedTo: projectId },
+                },
+            );
 
         return true;
     }
 
     async addBusinessContribution(projectId, contribution) {
-        if (!projectId || !contribution || typeof contribution !== "object") return false;
+        if (!projectId || !contribution || typeof contribution !== "object")
+            return false;
 
         // Add business contribution to the project
         const result = await this.getDb()
@@ -236,21 +260,27 @@ class DatabaseConnector {
                 { id: projectId },
                 {
                     $push: { businessDonations: contribution },
-                    $inc: { progress: contribution.estimatedValue * 10 }
-                }
+                    $inc: { progress: contribution.estimatedValue * 10 },
+                },
             );
         if (!result.acknowledged) return false;
 
         // Update the project to mark it as completed if necessary
-        if (await this.getProjectById(projectId).then(p => p.progress >= p.goal && !p.dateCompleted)) {
+        if (
+            await this.getProjectById(projectId).then(
+                (p) => p.progress >= p.goal && !p.dateCompleted,
+            )
+        ) {
             await this.getDb()
                 .collection("projects")
-                .updateOne({ id: projectId }, { $set: { dateCompleted: new Date() } });
+                .updateOne(
+                    { id: projectId },
+                    { $set: { dateCompleted: new Date() } },
+                );
         }
 
         return true;
     }
-
 }
 
 const MONGO_URI = process.env.MONGO_URI;
