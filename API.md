@@ -94,6 +94,14 @@
   - `goal` (number): Project goal
   - `completed` (boolean): Whether the project is now completed
 
+### POST /projects/:id/businessContribution
+- **Description:** Contribute points to a project as a business.
+- **Request Body:**
+  - `amount` (number): The number of points to contribute.
+  - `businessName` (string): Name of the business contributing.
+  - `businessAddress` (string): Address of the business.
+- **Access:** Government only
+
 ---
 
 ## Status

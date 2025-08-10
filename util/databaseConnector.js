@@ -226,6 +226,31 @@ class DatabaseConnector {
         return true;
     }
 
+    async addBusinessContribution(projectId, contribution) {
+        if (!projectId || !contribution || typeof contribution !== "object") return false;
+
+        // Add business contribution to the project
+        const result = await this.getDb()
+            .collection("projects")
+            .updateOne(
+                { id: projectId },
+                {
+                    $push: { businessDonations: contribution },
+                    $inc: { progress: contribution.estimatedValue * 10 }
+                }
+            );
+        if (!result.acknowledged) return false;
+
+        // Update the project to mark it as completed if necessary
+        if (await this.getProjectById(projectId).then(p => p.progress >= p.goal && !p.dateCompleted)) {
+            await this.getDb()
+                .collection("projects")
+                .updateOne({ id: projectId }, { $set: { dateCompleted: new Date() } });
+        }
+
+        return true;
+    }
+
 }
 
 const MONGO_URI = process.env.MONGO_URI;
